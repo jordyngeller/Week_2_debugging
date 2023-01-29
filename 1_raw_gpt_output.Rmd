@@ -1,0 +1,149 @@
+---
+title: "Debugging_Demo"
+author: "Matt Ross"
+date: "2023-01-23"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(dataRetrieval)
+library(lubridate)
+```
+
+# Poudre River 
+
+Yes, another option to download the discharge data from the Poudre River in Fort Collins using the R programming language is to use the dataRetrieval package. This package contains functions to access and retrieve data from various sources including the USGS National Water Information System (NWIS) which is the database used to store and retrieve water data, such as discharge data.
+
+First, you will need to install the dataRetrieval package by running the following command: install.packages("dataRetrieval")
+
+Next, you will need to load the package into your R session using the command library(dataRetrieval)
+
+You can then use the readNWISdv() function to retrieve the data from the NWAL site.
+
+poudre_data <- readNWISdv(siteNumber = "09174500", parameterCd = "00060", startDT = "1990-01-01", endDT = "2021-12-31")
+
+The function takes four parameters, siteNumber, parameterCd, startDT, and endDT. SiteNumber is the unique identifier of the site, parameterCd is the code that represents the parameter of interest, and startDT and endDT are the start and end dates for the data retrieval.
+
+Once you have downloaded the data, you can use the various functions in the tidyverse package to manipulate and analyze the data.
+
+You can also use the ggplot2 package, which is also a part of the tidyverse to create visualizations of the data.
+
+As before, you might want to check the format of the data before analyzing it, and check if there are missing values or other issues to clean it before visualizing or doing any analysis.
+
+Keep in mind that data availability and the format can change over time, so you may want to check the USGS website or the data documentation to ensure that you are using the most up-to-date data.
+
+## Data Download
+
+### Download Poudre River Data
+
+
+```{r}
+
+
+poudre_data <- readNWISdv(siteNumbers = "06752260",
+                          parameterCd = "00060", 
+                          startDate = "1990-01-01", 
+                          endDate = Sys.Date())  %>%
+  addWaterYear(.) %>%
+  select(date = Date,
+         year = waterYear,
+         q_cfs = X_00060_00003)
+  
+
+
+
+```
+
+
+Once you have downloaded and cleaned the discharge data for the Poudre River in Fort Collins, you can use various techniques to analyze the data and see if the minimum discharge has changed over the past 30 years. Here are a few examples of how you could do this using R:
+
+One way to analyze the data would be to calculate the minimum discharge for each year, and then plot the results to visualize any trends or changes over time. You can use the dplyr package to group the data by year, and then use the summarize() function to calculate the minimum discharge for each year. For example:
+
+## Analyzing data
+
+### Annual Minimum Discharge
+
+```{r summarize}
+
+
+poudre_data_by_year <- poudre_data %>%
+  group_by(year) %>%
+  summarize(min_q = min(q_cfs, na.rm = T))
+
+```
+
+
+
+Once you have the data grouped by year, you can use the ggplot2 package to create a line plot of the minimum discharge over time. For example:
+
+### Line Plot
+
+```{r}
+
+ggplot(poudre_data_by_year, aes(x = year, y = min_q)) +
+  geom_line() +
+  ggtitle("Minimum Discharge for Poudre River over Time") +
+  ylab('Minimum Q (cfs)') + 
+  xlab('Year')
+
+```
+
+
+### Point Plot
+
+```{r}
+ggplot(poudre_data_by_year, aes(x = year, y = min_q)) +
+  geom_point() +
+  ggtitle("Minimum Discharge for Poudre River over Time") +
+  ylab('Minimum Q (cfs)') + 
+  xlab('Year')
+
+```
+
+
+### Annual 5th percentiles
+
+```{r}
+  
+poudre_data_by_year <- poudre_data %>%
+  group_by(year) %>%
+  summarize(fifth_percentile_flow = quantile(q_cfs, 0.05, na.rm = T))
+
+
+```
+
+
+#### Point 5th percentile
+
+```{r}
+ggplot(poudre_data_by_year, aes(x = year, y = fifth_percentile_flow)) +
+  geom_point() +
+  ggtitle("5th percentile Discharge for Poudre River over Time") +
+  ylab('5% Q (cfs)') + 
+  xlab('Year') +
+  scale_y_log10()
+```
+
+
+### Annual Maximum
+
+
+```{r}
+poudre_data_by_year <- poudre_data %>%
+  group_by(year) %>%
+  summarize(ninety_fifth_percentile_flow = quantile(q_cfs, 0.95, na.rm = T))
+```
+
+
+```{r}
+ggplot(poudre_data_by_year, aes(x = year, y = ninety_fifth_percentile_flow)) +
+  geom_point() +
+  ggtitle("95th percentile Discharge for Poudre River over Time") +
+  ylab('95% Q (cfs)') +
+  xlab('Year') 
+```
+
+
+
+

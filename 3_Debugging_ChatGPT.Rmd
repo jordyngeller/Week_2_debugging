@@ -1,0 +1,37 @@
+---
+title: "ChatGPT Analysis of Mean Discharge in a River"
+author: "Matt Ross"
+date: "2023-01-23"
+output: html_document
+---
+
+# ChatGPT, the analyst
+
+For this assignment you will be asking ChatGPT to conduct an analysis of mean river
+discharge for any river station in the USA. You can use the Poudre River in 
+Fort Collins if you want, but I encourage you to find other USGS stations that 
+you are interested in. This assignment will have three prompts for ChatGPT, and
+you will need to troubleshoot this code for each prompt. The prompts are:
+
+1. *Using R, Download daily discharge data for XX river in YY city from 1990-2022 (you pick the river and 
+the city).* You can choose to provide ChatGPT with an actual USGS station ID which 
+will produce less errors, or you can see how well it figures out station ids 
+(its bad at this for some reason). You may also need to provide it with specific
+package recommendations (as I do in the videos).
+
+2. How would I take the summertime (June 21 - Sept 21) annual mean of this data and plot it
+with year on the x-axis and summertime mean flow on the y axis.
+
+3. How would I Use a linear model to determine if summer annual mean discharge is
+changing? 
+
+4 (Bonus). Why might a linear model be a poor choice for this analysis? 
+
+
+## Data Download
+
+## Data analysis and visualization
+
+## Model output
+
+## Bonus - why linear models are dangerous time-series analysis tools. 
